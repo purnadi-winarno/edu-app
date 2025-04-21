@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '../providers/language_provider.dart';
 import '../services/tts_service.dart';
 
-class AudioButton extends StatelessWidget {
+class AudioButton extends StatefulWidget {
   final String textToSpeak;
   final double size;
   final Color color;
@@ -16,8 +16,32 @@ class AudioButton extends StatelessWidget {
   });
 
   @override
+  State<AudioButton> createState() => _AudioButtonState();
+}
+
+class _AudioButtonState extends State<AudioButton> {
+  final TTSService _ttsService = TTSService();
+  bool _isInitialized = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isInitialized) {
+      _initTTS();
+      _isInitialized = true;
+    }
+  }
+
+  Future<void> _initTTS() async {
+    final languageProvider = Provider.of<LanguageProvider>(
+      context,
+      listen: false,
+    );
+    await _ttsService.setLanguage(languageProvider.locale.languageCode);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final ttsService = TTSService();
     final languageProvider = Provider.of<LanguageProvider>(
       context,
       listen: false,
@@ -26,15 +50,15 @@ class AudioButton extends StatelessWidget {
     return InkWell(
       onTap: () {
         // Set the language before speaking
-        ttsService.setLanguage(languageProvider.locale.languageCode);
-        ttsService.speak(textToSpeak);
+        _ttsService.setLanguage(languageProvider.locale.languageCode);
+        _ttsService.speak(widget.textToSpeak);
       },
-      borderRadius: BorderRadius.circular(size / 2),
+      borderRadius: BorderRadius.circular(widget.size / 2),
       child: Container(
-        width: size,
-        height: size,
+        width: widget.size,
+        height: widget.size,
         decoration: BoxDecoration(
-          color: color,
+          color: widget.color,
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
@@ -48,7 +72,7 @@ class AudioButton extends StatelessWidget {
         child: Icon(
           Icons.volume_up_rounded,
           color: Colors.white,
-          size: size * 0.6,
+          size: widget.size * 0.6,
         ),
       ),
     );

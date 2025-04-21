@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class GameState extends ChangeNotifier {
   // Current level
@@ -28,6 +29,28 @@ class GameState extends ChangeNotifier {
   // Track consecutive correct answers
   int _consecutiveCorrectAnswers = 0;
   int get consecutiveCorrectAnswers => _consecutiveCorrectAnswers;
+
+  // Constructor
+  GameState() {
+    _initializeLanguage();
+  }
+
+  // Initialize language from shared preferences
+  Future<void> _initializeLanguage() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final String? languageCode = prefs.getString('languageCode');
+      if (languageCode != null && languageCode != _currentLanguage) {
+        _currentLanguage = languageCode;
+        if (_currentLevel > 0) {
+          // Reload current level if needed
+          setLevel(_currentLevel);
+        }
+      }
+    } catch (e) {
+      print('Error loading language in GameState: $e');
+    }
+  }
 
   // Getter for current question
   Map<String, dynamic>? get currentQuestion {

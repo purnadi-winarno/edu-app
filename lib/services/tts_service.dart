@@ -1,10 +1,39 @@
 import 'package:flutter_tts/flutter_tts.dart';
 import 'dart:async';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TTSService {
   final FlutterTts _flutterTts = FlutterTts();
   bool _isInitialized = false;
   String _currentLanguage = 'id'; // Default to Indonesian
+
+  // Singleton pattern
+  static final TTSService _instance = TTSService._internal();
+
+  factory TTSService() {
+    return _instance;
+  }
+
+  TTSService._internal() {
+    _loadLanguage();
+  }
+
+  // Load language from shared preferences
+  Future<void> _loadLanguage() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final String? languageCode = prefs.getString('languageCode');
+
+      if (languageCode != null) {
+        await setLanguage(languageCode);
+      } else {
+        await initialize();
+      }
+    } catch (e) {
+      print('Error loading TTS language from preferences: $e');
+      await initialize();
+    }
+  }
 
   // Initialize with a specific language
   Future<void> initialize([String? language]) async {
@@ -46,6 +75,8 @@ class TTSService {
       // Reset voice properties for the new language
       await _flutterTts.setSpeechRate(0.5);
       await _flutterTts.setPitch(1.0);
+
+      _isInitialized = true;
     } catch (e) {
       print('Error setting TTS language: $e');
     }
