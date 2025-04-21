@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:confetti/confetti.dart';
+import 'package:lottie/lottie.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../models/game_state.dart';
 import 'level_selection_page.dart';
@@ -13,21 +13,45 @@ class ResultPage extends StatefulWidget {
   State<ResultPage> createState() => _ResultPageState();
 }
 
-class _ResultPageState extends State<ResultPage> {
-  late ConfettiController _confettiController;
+class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
+  late AnimationController _scoreAnimationController;
+  late AnimationController _lottieController;
+  late Animation<int> _scoreAnimation;
 
   @override
   void initState() {
     super.initState();
-    _confettiController = ConfettiController(
-      duration: const Duration(seconds: 5),
+
+    // Animation for score counting
+    _scoreAnimationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
     );
-    _confettiController.play();
+
+    // Animation for celebration
+    _lottieController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    );
+
+    final gameState = Provider.of<GameState>(context, listen: false);
+    final int finalScore = gameState.progressPercentage * 100 ~/ 1;
+
+    _scoreAnimation = IntTween(begin: 0, end: finalScore).animate(
+      CurvedAnimation(parent: _scoreAnimationController, curve: Curves.easeOut),
+    );
+
+    // Start animations after build completes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scoreAnimationController.forward();
+      _lottieController.forward();
+    });
   }
 
   @override
   void dispose() {
-    _confettiController.dispose();
+    _scoreAnimationController.dispose();
+    _lottieController.dispose();
     super.dispose();
   }
 
@@ -37,7 +61,6 @@ class _ResultPageState extends State<ResultPage> {
     final localizations = AppLocalizations.of(context)!;
     final int level = gameState.currentLevel;
     final int lives = gameState.lives;
-    final int score = gameState.progressPercentage * 100 ~/ 1;
 
     return Scaffold(
       body: Stack(
@@ -67,20 +90,12 @@ class _ResultPageState extends State<ResultPage> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    Container(
-                      width: 120,
-                      height: 120,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Center(
-                        child: Icon(
-                          Icons.emoji_events,
-                          size: 80,
-                          color: Colors.amber,
-                        ),
-                      ),
+                    Lottie.asset(
+                      'assets/animations/trophy.json',
+                      controller: _lottieController,
+                      width: 150,
+                      height: 150,
+                      repeat: false,
                     ),
                     const SizedBox(height: 30),
                     Text(
@@ -93,7 +108,16 @@ class _ResultPageState extends State<ResultPage> {
                       ),
                     ),
                     const SizedBox(height: 24),
-                    _buildResultCard(localizations.finalScore, '$score%'),
+                    // Animated score
+                    AnimatedBuilder(
+                      animation: _scoreAnimationController,
+                      builder: (context, child) {
+                        return _buildResultCard(
+                          localizations.finalScore,
+                          '${_scoreAnimation.value}%',
+                        );
+                      },
+                    ),
                     const SizedBox(height: 16),
                     _buildResultCard(localizations.remainingLives, '$lives'),
                     const Spacer(),
@@ -151,23 +175,11 @@ class _ResultPageState extends State<ResultPage> {
           ),
           Align(
             alignment: Alignment.topCenter,
-            child: ConfettiWidget(
-              confettiController: _confettiController,
-              blastDirectionality: BlastDirectionality.explosive,
-              particleDrag: 0.05,
-              emissionFrequency: 0.05,
-              numberOfParticles: 20,
-              gravity: 0.2,
-              shouldLoop: false,
-              colors: const [
-                Colors.green,
-                Colors.blue,
-                Colors.pink,
-                Colors.orange,
-                Colors.purple,
-                Colors.red,
-                Colors.yellow,
-              ],
+            child: Lottie.asset(
+              'assets/animations/celebration.json',
+              width: double.infinity,
+              fit: BoxFit.cover,
+              repeat: true,
             ),
           ),
         ],

@@ -4,11 +4,12 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../models/game_state.dart';
 import '../services/tts_service.dart';
 import '../services/sound_service.dart';
+import '../services/animation_service.dart';
 import '../widgets/game_progress_bar.dart';
 import '../widgets/lives_counter.dart';
 import '../widgets/word_button.dart';
 import '../widgets/audio_button.dart';
-import '../widgets/confetti_overlay.dart';
+import '../widgets/lottie_overlay.dart';
 import 'result_page.dart';
 import 'game_over_page.dart';
 import '../providers/language_provider.dart';
@@ -23,9 +24,11 @@ class QuizPage extends StatefulWidget {
 class _QuizPageState extends State<QuizPage> {
   final TTSService _ttsService = TTSService();
   final SoundService _soundService = SoundService();
+  final AnimationService _animationService = AnimationService();
   bool _showFeedback = false;
   bool _isCorrect = false;
-  bool _showConfetti = false;
+  bool _showAnimation = false;
+  String _currentAnimation = 'assets/animations/thumbs_up.json';
 
   @override
   void initState() {
@@ -68,9 +71,6 @@ class _QuizPageState extends State<QuizPage> {
     setState(() {
       _showFeedback = true;
       _isCorrect = isCorrect;
-      if (isCorrect) {
-        _showConfetti = true;
-      }
     });
 
     // Wait and then proceed
@@ -79,11 +79,11 @@ class _QuizPageState extends State<QuizPage> {
 
       setState(() {
         _showFeedback = false;
-        _showConfetti = false;
       });
 
       if (isCorrect) {
-        gameState.handleCorrectAnswer();
+        // Perbarui status game dulu
+        gameState.handleCorrectAnswerWithoutMoving();
 
         // Check if this was the last question
         if (gameState.isLastQuestion) {
@@ -94,15 +94,51 @@ class _QuizPageState extends State<QuizPage> {
           return;
         }
 
-        // Get current language and speak the next question
-        final languageProvider = Provider.of<LanguageProvider>(
-          context,
-          listen: false,
-        );
-        _ttsService.setLanguage(languageProvider.locale.languageCode);
+        // Menampilkan animasi khusus jika 3 jawaban benar berturut-turut
+        if (_animationService.shouldShowSpecialAnimation(
+          gameState.consecutiveCorrectAnswers,
+        )) {
+          setState(() {
+            _currentAnimation = _animationService.getRandomSuccessAnimation();
+            _showAnimation = true;
+          });
 
-        if (gameState.currentQuestion != null) {
-          _ttsService.speak(gameState.currentQuestion!['kalimat']);
+          // Tunggu animasi selesai, lalu pindah ke pertanyaan berikutnya
+          Future.delayed(const Duration(seconds: 2), () {
+            if (!mounted) return;
+
+            setState(() {
+              _showAnimation = false;
+            });
+
+            // Sekarang baru pindah ke pertanyaan berikutnya
+            gameState.moveToNextQuestion();
+
+            // Dapatkan bahasa saat ini dan baca pertanyaan berikutnya
+            final languageProvider = Provider.of<LanguageProvider>(
+              context,
+              listen: false,
+            );
+            _ttsService.setLanguage(languageProvider.locale.languageCode);
+
+            if (gameState.currentQuestion != null) {
+              _ttsService.speak(gameState.currentQuestion!['kalimat']);
+            }
+          });
+        } else {
+          // Jika tidak ada animasi khusus, langsung pindah ke pertanyaan berikutnya
+          gameState.moveToNextQuestion();
+
+          // Dapatkan bahasa saat ini dan baca pertanyaan berikutnya
+          final languageProvider = Provider.of<LanguageProvider>(
+            context,
+            listen: false,
+          );
+          _ttsService.setLanguage(languageProvider.locale.languageCode);
+
+          if (gameState.currentQuestion != null) {
+            _ttsService.speak(gameState.currentQuestion!['kalimat']);
+          }
         }
       } else {
         gameState.handleIncorrectAnswer();
@@ -124,8 +160,9 @@ class _QuizPageState extends State<QuizPage> {
 
     return Consumer<GameState>(
       builder: (context, gameState, child) {
-        return ConfettiOverlay(
-          isPlaying: _showConfetti,
+        return LottieOverlay(
+          isPlaying: _showAnimation,
+          animationPath: _currentAnimation,
           child: Scaffold(
             appBar: AppBar(
               title: Text('Level ${gameState.currentLevel}'),
@@ -255,28 +292,38 @@ class _QuizPageState extends State<QuizPage> {
                 _showFeedback
                     ? Container(
                       width: double.infinity,
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 24,
+                        horizontal: 16,
+                      ),
                       color: _isCorrect ? Colors.green : Colors.red,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(
-                            _isCorrect ? Icons.check_circle : Icons.cancel,
-                            color: Colors.white,
-                            size: 30,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                _isCorrect ? Icons.check_circle : Icons.cancel,
+                                color: Colors.white,
+                                size: 30,
+                              ),
+                              const SizedBox(width: 12),
+                              Text(
+                                _isCorrect
+                                    ? localizations.correctFeedback
+                                    : localizations.incorrectFeedback,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(width: 12),
-                          Text(
-                            _isCorrect
-                                ? localizations.correctFeedback
-                                : localizations.incorrectFeedback,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                          // Add spacer to cover the check answer button
+                          const SizedBox(height: 60),
                         ],
                       ),
                     )

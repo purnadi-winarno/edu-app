@@ -25,16 +25,9 @@ class GameState extends ChangeNotifier {
   // Current language
   String _currentLanguage = 'id'; // Default to Indonesian
 
-  // Set the language
-  void setLanguage(String languageCode) {
-    if (_currentLanguage != languageCode) {
-      _currentLanguage = languageCode;
-      if (_currentLevel > 0) {
-        // Reload current level with new language
-        setLevel(_currentLevel);
-      }
-    }
-  }
+  // Track consecutive correct answers
+  int _consecutiveCorrectAnswers = 0;
+  int get consecutiveCorrectAnswers => _consecutiveCorrectAnswers;
 
   // Getter for current question
   Map<String, dynamic>? get currentQuestion {
@@ -206,12 +199,21 @@ class GameState extends ChangeNotifier {
   // Handle correct answer
   void handleCorrectAnswer() {
     _progress++;
+    _consecutiveCorrectAnswers++;
     moveToNextQuestion();
+  }
+
+  // Handle correct answer without moving to next question
+  void handleCorrectAnswerWithoutMoving() {
+    _progress++;
+    _consecutiveCorrectAnswers++;
+    notifyListeners();
   }
 
   // Handle incorrect answer
   void handleIncorrectAnswer() {
     _lives--;
+    _consecutiveCorrectAnswers = 0;
     notifyListeners();
   }
 
@@ -230,6 +232,7 @@ class GameState extends ChangeNotifier {
     _lives = 3;
     _progress = 0;
     _currentQuestionIndex = 0;
+    _consecutiveCorrectAnswers = 0;
     _currentLevelQuestions = [];
     _shuffledWords = [];
     _selectedWords = [];
@@ -239,5 +242,16 @@ class GameState extends ChangeNotifier {
   // Check if game is over
   bool isGameOver() {
     return _lives <= 0;
+  }
+
+  // Set the language
+  void setLanguage(String languageCode) {
+    if (_currentLanguage != languageCode) {
+      _currentLanguage = languageCode;
+      if (_currentLevel > 0) {
+        // Reload current level with new language
+        setLevel(_currentLevel);
+      }
+    }
   }
 }
