@@ -38,13 +38,13 @@ class SoundService {
   // Play a correct answer sound
   Future<void> playCorrectSound() async {
     if (_isMuted) return;
-    await _playSound('correct.mp3');
+    await _playSound('ding.mp3');
   }
 
   // Play an incorrect answer sound
   Future<void> playIncorrectSound() async {
     if (_isMuted) return;
-    await _playSound('incorrect.mp3');
+    await _playSound('incorrect.wav');
   }
 
   // Play a sound by type

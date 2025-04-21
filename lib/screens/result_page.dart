@@ -91,11 +91,10 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
                     ),
                     const SizedBox(height: 20),
                     Lottie.asset(
-                      'assets/animations/trophy.json',
-                      controller: _lottieController,
-                      width: 150,
-                      height: 150,
-                      repeat: false,
+                      'assets/animations/celebration.json',
+                      width: 200,
+                      fit: BoxFit.cover,
+                      repeat: true,
                     ),
                     const SizedBox(height: 30),
                     Text(
@@ -173,15 +172,15 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
               ),
             ),
           ),
-          Align(
-            alignment: Alignment.topCenter,
-            child: Lottie.asset(
-              'assets/animations/celebration.json',
-              width: double.infinity,
-              fit: BoxFit.cover,
-              repeat: true,
-            ),
-          ),
+          // Align(
+          //   alignment: Alignment.topCenter,
+          //   child: Lottie.asset(
+          //     'assets/animations/celebration.json',
+          //     width: double.infinity,
+          //     fit: BoxFit.cover,
+          //     repeat: true,
+          //   ),
+          // ),
         ],
       ),
     );
