@@ -11,16 +11,6 @@ class HomePage extends StatelessWidget {
     final localizations = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blue.shade700,
-        elevation: 0,
-        actions: const [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.0),
-            child: LanguageSwitch(),
-          ),
-        ],
-      ),
       body: Container(
         width: double.infinity,
         decoration: BoxDecoration(
@@ -34,6 +24,15 @@ class HomePage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.0),
+                    child: LanguageSwitch(),
+                  ),
+                ],
+              ),
               const Spacer(),
               Text(
                 localizations.homeTitle,

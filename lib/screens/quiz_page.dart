@@ -329,7 +329,6 @@ class _QuizPageState extends State<QuizPage> {
                               'assets/animations/success_check.json',
                               width: 80,
                               height: 80,
-                              repeat: true,
                               animate: true,
                             ),
 

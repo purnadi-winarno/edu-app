@@ -36,19 +36,19 @@ class LanguageSwitch extends StatelessWidget {
           trackOutlineColor: WidgetStateProperty.resolveWith<Color>(
             (states) =>
                 states.contains(WidgetState.selected)
-                    ? Colors.red
+                    ? Colors.blue
                     : Colors.green,
           ),
           thumbColor: WidgetStateProperty.resolveWith<Color>(
             (states) =>
                 states.contains(WidgetState.selected)
-                    ? Colors.red
-                    : Colors.green,
+                    ? const Color.fromARGB(255, 20, 70, 111)
+                    : const Color.fromARGB(255, 92, 236, 97),
           ),
           trackColor: WidgetStateProperty.resolveWith<Color>(
             (states) =>
                 states.contains(WidgetState.selected)
-                    ? Colors.red.withOpacity(0.5)
+                    ? Colors.blue.withOpacity(0.5)
                     : Colors.green.withOpacity(0.5),
           ),
           onChanged: (value) {
