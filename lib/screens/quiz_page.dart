@@ -167,7 +167,7 @@ class _QuizPageState extends State<QuizPage> {
                               isSelected: true,
                               onTap: () => gameState.unselectWord(word),
                             );
-                          }).toList(),
+                          }),
                         ],
                       ),
                     ),
@@ -186,7 +186,7 @@ class _QuizPageState extends State<QuizPage> {
                               word: word,
                               onTap: () => gameState.selectWord(word),
                             );
-                          }).toList(),
+                          }),
                         ],
                       ),
                     ),
@@ -225,25 +225,14 @@ class _QuizPageState extends State<QuizPage> {
                       width: double.infinity,
                       padding: const EdgeInsets.all(16),
                       color: _isCorrect ? Colors.green : Colors.red,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            _isCorrect ? Icons.check_circle : Icons.cancel,
-                            color: Colors.white,
-                            size: 30,
-                          ),
-                          const SizedBox(width: 12),
-                          Text(
-                            _isCorrect ? 'Benar! 👏' : 'Salah 😔 Coba lagi!',
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
+                      child: Text(
+                        _isCorrect ? 'Benar! 👏' : 'Salah 😔 Coba lagi!',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     )
                     : null,
