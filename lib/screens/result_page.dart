@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:audioplayers/audioplayers.dart';
 import '../models/game_state.dart';
 import '../services/sound_service.dart';
 import 'level_selection_page.dart';
@@ -23,6 +24,8 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
   late Animation<int> _livesAnimation;
 
   final SoundService _soundService = SoundService();
+  final AudioPlayer _audioPlayer = AudioPlayer();
+  bool _soundCompleted = false;
 
   bool _showLivesText = false;
   bool _showLivesValue = false;
@@ -62,16 +65,52 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
       CurvedAnimation(parent: _livesAnimationController, curve: Curves.easeOut),
     );
 
+    // Listen for sound completion
+    _audioPlayer.onPlayerComplete.listen((_) {
+      print("Level complete sound completed naturally");
+      if (mounted) {
+        setState(() {
+          _soundCompleted = true;
+        });
+      }
+    });
+
     // Start animations after build completes with staggered timing
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _startAnimations();
+      _playLevelCompleteSound();
     });
   }
 
-  void _startAnimations() {
-    // Play celebration sound
-    _soundService.playSound('wow');
+  // Play level complete sound
+  Future<void> _playLevelCompleteSound() async {
+    try {
+      // Set volume maksimal
+      await _audioPlayer.setVolume(1.0);
 
+      // Mainkan suara
+      print("Playing level complete sound");
+      await _audioPlayer.play(AssetSource('sounds/game_level_complete.wav'));
+
+      // Set timeout jaga-jaga
+      Future.delayed(const Duration(seconds: 10), () {
+        if (!_soundCompleted && mounted) {
+          print("Level complete sound timeout safety");
+          setState(() {
+            _soundCompleted = true;
+          });
+        }
+      });
+    } catch (e) {
+      print("Error playing level complete sound: $e");
+      // Jika terjadi error, anggap sudah selesai
+      setState(() {
+        _soundCompleted = true;
+      });
+    }
+  }
+
+  void _startAnimations() {
     // Start trophy animation
     _lottieController.forward();
 
@@ -105,11 +144,55 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
     });
   }
 
+  // Metode untuk navigasi ke level selanjutnya
+  void _navigateToNextLevel() {
+    // Jika suara belum selesai, berikan feedback
+    if (!_soundCompleted) {
+      print("Menunggu suara selesai...");
+      // Tambahkan feedback visual
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Mohon tunggu..."),
+          duration: Duration(milliseconds: 500),
+        ),
+      );
+      return;
+    }
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const LevelSelectionPage()),
+    );
+  }
+
+  // Metode untuk kembali ke menu utama
+  void _navigateToHome() {
+    // Jika suara belum selesai, berikan feedback
+    if (!_soundCompleted) {
+      print("Menunggu suara selesai...");
+      // Tambahkan feedback visual
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Mohon tunggu..."),
+          duration: Duration(milliseconds: 500),
+        ),
+      );
+      return;
+    }
+
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => const HomePage()),
+      (route) => false,
+    );
+  }
+
   @override
   void dispose() {
     _scoreAnimationController.dispose();
     _lottieController.dispose();
     _livesAnimationController.dispose();
+    _audioPlayer.dispose();
     super.dispose();
   }
 
@@ -182,14 +265,7 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
                   ),
                 const Spacer(),
                 ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const LevelSelectionPage(),
-                      ),
-                    );
-                  },
+                  onPressed: _navigateToNextLevel,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     foregroundColor: Colors.blue.shade700,
@@ -209,13 +285,7 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
                 ),
                 const SizedBox(height: 16),
                 TextButton(
-                  onPressed: () {
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(builder: (context) => const HomePage()),
-                      (route) => false,
-                    );
-                  },
+                  onPressed: _navigateToHome,
                   child: Text(
                     localizations.backToMenuButton,
                     style: const TextStyle(

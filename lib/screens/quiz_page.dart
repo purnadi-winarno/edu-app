@@ -29,6 +29,7 @@ class _QuizPageState extends State<QuizPage> {
   bool _showFeedback = false;
   bool _isCorrect = false;
   bool _showAnimation = false;
+  bool _isLivesAnimating = false;
   String _currentAnimation = 'assets/animations/thumbs_up.json';
 
   @override
@@ -118,9 +119,11 @@ class _QuizPageState extends State<QuizPage> {
       // Jika jawaban salah, mainkan sound dan tampilkan feedback
       _soundService.playIncorrectSound();
 
+      // Animasikan hati berkurang
       setState(() {
         _showFeedback = true;
         _isCorrect = false;
+        _isLivesAnimating = true;
       });
 
       // Tunggu dan lanjutkan
@@ -129,6 +132,7 @@ class _QuizPageState extends State<QuizPage> {
 
         setState(() {
           _showFeedback = false;
+          _isLivesAnimating = false;
         });
 
         gameState.handleIncorrectAnswer();
@@ -188,7 +192,10 @@ class _QuizPageState extends State<QuizPage> {
               actions: [
                 Padding(
                   padding: const EdgeInsets.only(right: 16.0),
-                  child: LivesCounter(lives: gameState.lives),
+                  child: LivesCounter(
+                    lives: gameState.lives,
+                    isAnimating: _isLivesAnimating,
+                  ),
                 ),
               ],
             ),
