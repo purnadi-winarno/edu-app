@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:lottie/lottie.dart';
 import '../models/game_state.dart';
 import '../services/tts_service.dart';
 import '../services/sound_service.dart';
@@ -61,97 +62,112 @@ class _QuizPageState extends State<QuizPage> {
     final gameState = Provider.of<GameState>(context, listen: false);
     final isCorrect = gameState.checkAnswer();
 
-    // Play appropriate sound based on answer
+    // Perbarui state terlebih dahulu
     if (isCorrect) {
-      _soundService.playCorrectSound();
+      gameState.handleCorrectAnswerWithoutMoving();
+
+      // Cek apakah ini adalah jawaban benar yang ke-3, 6, 9, dll
+      bool isSpecialMilestone = _animationService.shouldShowSpecialAnimation(
+        gameState.consecutiveCorrectAnswers,
+      );
+
+      if (isSpecialMilestone) {
+        // Mainkan sound wow dan langsung tampilkan animasi tanpa alert
+        _soundService.playSound('wow');
+
+        // Tampilkan animasi overlay
+        setState(() {
+          _currentAnimation = _animationService.getRandomSuccessAnimation();
+          _showAnimation = true;
+          // Tidak menampilkan feedback alert
+          _showFeedback = false;
+        });
+
+        // Tunggu animasi selesai, lalu lanjut ke pertanyaan berikutnya
+        Future.delayed(const Duration(seconds: 2), () {
+          if (!mounted) return;
+
+          setState(() {
+            _showAnimation = false;
+          });
+
+          // Lanjut ke pertanyaan berikutnya
+          _moveToNextQuestion(gameState);
+        });
+      } else {
+        // Jika bukan milestone khusus, tampilkan feedback biasa
+        _soundService.playCorrectSound();
+        setState(() {
+          _showFeedback = true;
+          _isCorrect = true;
+        });
+
+        // Tunggu feedback selesai
+        Future.delayed(const Duration(seconds: 2), () {
+          if (!mounted) return;
+
+          setState(() {
+            _showFeedback = false;
+          });
+
+          // Lanjut ke pertanyaan berikutnya
+          _moveToNextQuestion(gameState);
+        });
+      }
     } else {
+      // Jika jawaban salah, mainkan sound dan tampilkan feedback
       _soundService.playIncorrectSound();
-    }
-
-    setState(() {
-      _showFeedback = true;
-      _isCorrect = isCorrect;
-    });
-
-    // Wait and then proceed
-    Future.delayed(const Duration(seconds: 2), () {
-      if (!mounted) return;
 
       setState(() {
-        _showFeedback = false;
+        _showFeedback = true;
+        _isCorrect = false;
       });
 
-      if (isCorrect) {
-        // Perbarui status game dulu
-        gameState.handleCorrectAnswerWithoutMoving();
+      // Tunggu dan lanjutkan
+      Future.delayed(const Duration(seconds: 2), () {
+        if (!mounted) return;
 
-        // Check if this was the last question
-        if (gameState.isLastQuestion) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const ResultPage()),
-          );
-          return;
-        }
+        setState(() {
+          _showFeedback = false;
+        });
 
-        // Menampilkan animasi khusus jika 3 jawaban benar berturut-turut
-        if (_animationService.shouldShowSpecialAnimation(
-          gameState.consecutiveCorrectAnswers,
-        )) {
-          setState(() {
-            _currentAnimation = _animationService.getRandomSuccessAnimation();
-            _showAnimation = true;
-          });
-
-          // Tunggu animasi selesai, lalu pindah ke pertanyaan berikutnya
-          Future.delayed(const Duration(seconds: 2), () {
-            if (!mounted) return;
-
-            setState(() {
-              _showAnimation = false;
-            });
-
-            // Sekarang baru pindah ke pertanyaan berikutnya
-            gameState.moveToNextQuestion();
-
-            // Dapatkan bahasa saat ini dan baca pertanyaan berikutnya
-            final languageProvider = Provider.of<LanguageProvider>(
-              context,
-              listen: false,
-            );
-            _ttsService.setLanguage(languageProvider.locale.languageCode);
-
-            if (gameState.currentQuestion != null) {
-              _ttsService.speak(gameState.currentQuestion!['kalimat']);
-            }
-          });
-        } else {
-          // Jika tidak ada animasi khusus, langsung pindah ke pertanyaan berikutnya
-          gameState.moveToNextQuestion();
-
-          // Dapatkan bahasa saat ini dan baca pertanyaan berikutnya
-          final languageProvider = Provider.of<LanguageProvider>(
-            context,
-            listen: false,
-          );
-          _ttsService.setLanguage(languageProvider.locale.languageCode);
-
-          if (gameState.currentQuestion != null) {
-            _ttsService.speak(gameState.currentQuestion!['kalimat']);
-          }
-        }
-      } else {
         gameState.handleIncorrectAnswer();
 
-        // Check if game over
+        // Cek if game over
         if (gameState.isGameOver()) {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => const GameOverPage()),
           );
         }
-      }
-    });
+      });
+    }
+  }
+
+  // Method untuk pindah ke pertanyaan berikutnya
+  void _moveToNextQuestion(GameState gameState) {
+    // Cek jika ini pertanyaan terakhir
+    if (gameState.isLastQuestion) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const ResultPage()),
+      );
+      return;
+    }
+
+    // Pindah ke pertanyaan selanjutnya
+    gameState.moveToNextQuestion();
+
+    // Dapatkan bahasa saat ini dan baca pertanyaan berikutnya
+    final languageProvider = Provider.of<LanguageProvider>(
+      context,
+      listen: false,
+    );
+    _ttsService.setLanguage(languageProvider.locale.languageCode);
+
+    if (gameState.currentQuestion != null) {
+      _ttsService.speak(gameState.currentQuestion!['kalimat']);
+    }
   }
 
   @override
@@ -293,21 +309,32 @@ class _QuizPageState extends State<QuizPage> {
                     ? Container(
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(
-                        vertical: 24,
+                        vertical: 20,
                         horizontal: 16,
                       ),
                       color: _isCorrect ? Colors.green : Colors.red,
-                      child: Column(
+                      child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
+                          // Lottie animation for correct feedback only
+                          if (_isCorrect)
+                            Lottie.asset(
+                              'assets/animations/success_check.json',
+                              width: 80,
+                              height: 80,
+                              repeat: true,
+                              animate: true,
+                            ),
+
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(
-                                _isCorrect ? Icons.check_circle : Icons.cancel,
-                                color: Colors.white,
-                                size: 30,
-                              ),
+                              if (!_isCorrect)
+                                Icon(
+                                  Icons.cancel,
+                                  color: Colors.white,
+                                  size: 30,
+                                ),
                               const SizedBox(width: 12),
                               Text(
                                 _isCorrect

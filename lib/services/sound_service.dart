@@ -9,6 +9,7 @@ class SoundService {
   static const String CLICK = 'click';
   static const String CORRECT = 'correct';
   static const String INCORRECT = 'incorrect';
+  static const String WOW = 'wow';
 
   // Singleton pattern
   static final SoundService _instance = SoundService._internal();
@@ -29,6 +30,16 @@ class SoundService {
     return _audioPlayer!;
   }
 
+  // Play a sound file from assets
+  Future<void> _playSound(String soundFile) async {
+    try {
+      final player = _getPlayer();
+      await player.play(AssetSource('sounds/$soundFile'));
+    } catch (e) {
+      print('Error playing sound: $e');
+    }
+  }
+
   // Play a click sound when selecting options
   Future<void> playClickSound() async {
     if (_isMuted) return;
@@ -47,6 +58,12 @@ class SoundService {
     await _playSound('incorrect.wav');
   }
 
+  // Play a wow sound for special achievements
+  Future<void> playWowSound() async {
+    if (_isMuted) return;
+    await _playSound('wow.mp3');
+  }
+
   // Play a sound by type
   Future<void> playSound(String type) async {
     if (_isMuted) return;
@@ -61,16 +78,9 @@ class SoundService {
       case INCORRECT:
         await playIncorrectSound();
         break;
-    }
-  }
-
-  // Play a sound file from assets
-  Future<void> _playSound(String soundFile) async {
-    try {
-      final player = _getPlayer();
-      await player.play(AssetSource('sounds/$soundFile'));
-    } catch (e) {
-      print('Error playing sound: $e');
+      case WOW:
+        await playWowSound();
+        break;
     }
   }
 
