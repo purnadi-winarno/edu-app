@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../models/game_state.dart';
 import 'level_selection_page.dart';
 import 'home_page.dart';
@@ -9,6 +10,8 @@ class GameOverPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -26,9 +29,9 @@ class GameOverPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Spacer(),
-                const Text(
-                  'Game Over!',
-                  style: TextStyle(
+                Text(
+                  localizations.gameOverTitle,
+                  style: const TextStyle(
                     fontSize: 42,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
@@ -51,16 +54,16 @@ class GameOverPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 30),
-                const Text(
-                  'Nyawa kamu sudah habis!',
+                Text(
+                  localizations.livesExhausted,
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white, fontSize: 20),
+                  style: const TextStyle(color: Colors.white, fontSize: 20),
                 ),
                 const SizedBox(height: 10),
-                const Text(
-                  'Jangan menyerah, Ayo coba lagi!',
+                Text(
+                  localizations.dontGiveUp,
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white, fontSize: 18),
+                  style: const TextStyle(color: Colors.white, fontSize: 18),
                 ),
                 const Spacer(),
                 ElevatedButton(
@@ -82,9 +85,12 @@ class GameOverPage extends StatelessWidget {
                     ),
                     elevation: 4,
                   ),
-                  child: const Text(
-                    'Coba Lagi',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  child: Text(
+                    localizations.tryAgainButton,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -97,9 +103,9 @@ class GameOverPage extends StatelessWidget {
                       (route) => false,
                     );
                   },
-                  child: const Text(
-                    'Kembali ke Menu Utama',
-                    style: TextStyle(
+                  child: Text(
+                    localizations.backToMenuButton,
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,

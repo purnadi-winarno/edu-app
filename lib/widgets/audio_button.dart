@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/language_provider.dart';
 import '../services/tts_service.dart';
 
 class AudioButton extends StatelessWidget {
@@ -16,9 +18,15 @@ class AudioButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ttsService = TTSService();
+    final languageProvider = Provider.of<LanguageProvider>(
+      context,
+      listen: false,
+    );
 
     return InkWell(
       onTap: () {
+        // Set the language before speaking
+        ttsService.setLanguage(languageProvider.locale.languageCode);
         ttsService.speak(textToSpeak);
       },
       borderRadius: BorderRadius.circular(size / 2),

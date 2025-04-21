@@ -1,0 +1,34 @@
+{
+  "appTitle": "Belajar Kata",
+  "homeTitle": "Belajar Kata",
+  "homeSubtitle": "Belajar Menyusun Kalimat dengan Cara Menyenangkan!",
+  "startButton": "Mulai Bermain",
+  
+  "levelSelectionTitle": "Pilih Level",
+  "levelSelectionSubtitle": "Pilih Level Permainan",
+  "level1Title": "Level 1",
+  "level1Description": "Kalimat Sederhana",
+  "level2Title": "Level 2",
+  "level2Description": "Kalimat Menengah",
+  "level3Title": "Level 3",
+  "level3Description": "Kalimat Kompleks",
+  
+  "questionText": "Soal {current} dari {total}",
+  "checkAnswerButton": "Periksa Jawaban",
+  "correctFeedback": "Benar! 👏",
+  "incorrectFeedback": "Salah 😔 Coba lagi!",
+  
+  "gameOverTitle": "Game Over!",
+  "livesExhausted": "Nyawa kamu sudah habis!",
+  "dontGiveUp": "Jangan menyerah, Ayo coba lagi!",
+  "tryAgainButton": "Coba Lagi",
+  "backToMenuButton": "Kembali ke Menu Utama",
+  
+  "congratulationsTitle": "Selamat!",
+  "levelComplete": "Level {level} Selesai!",
+  "finalScore": "Skor Akhir",
+  "remainingLives": "Nyawa Tersisa",
+  "nextLevelButton": "Level Berikutnya",
+  
+  "languageSwitch": "Bahasa"
+} 

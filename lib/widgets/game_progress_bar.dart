@@ -6,6 +6,7 @@ class GameProgressBar extends StatelessWidget {
   final Color backgroundColor;
   final double height;
   final double borderRadius;
+  final double width;
 
   const GameProgressBar({
     super.key,
@@ -14,11 +15,13 @@ class GameProgressBar extends StatelessWidget {
     this.backgroundColor = Colors.grey,
     this.height = 15.0,
     this.borderRadius = 8.0,
+    this.width = double.infinity,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: width,
       height: height,
       decoration: BoxDecoration(
         color: backgroundColor.withOpacity(0.3),

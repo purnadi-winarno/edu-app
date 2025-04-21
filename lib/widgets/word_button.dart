@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import '../services/sound_service.dart';
 
 class WordButton extends StatelessWidget {
   final String word;
   final VoidCallback onTap;
   final bool isSelected;
+  final SoundService _soundService = SoundService();
 
-  const WordButton({
+  WordButton({
     super.key,
     required this.word,
     required this.onTap,
@@ -15,7 +17,10 @@ class WordButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: () {
+        _soundService.playClickSound();
+        onTap();
+      },
       child: Container(
         margin: const EdgeInsets.all(4.0),
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),

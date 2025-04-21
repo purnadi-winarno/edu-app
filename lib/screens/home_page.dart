@@ -1,12 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'level_selection_page.dart';
+import '../widgets/language_switch.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.blue.shade700,
+        elevation: 0,
+        actions: const [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.0),
+            child: LanguageSwitch(),
+          ),
+        ],
+      ),
       body: Container(
         width: double.infinity,
         decoration: BoxDecoration(
@@ -22,7 +36,7 @@ class HomePage extends StatelessWidget {
             children: [
               const Spacer(),
               Text(
-                'Belajar Kata',
+                localizations.homeTitle,
                 style: Theme.of(context).textTheme.displayLarge?.copyWith(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -46,10 +60,10 @@ class HomePage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 40),
-              const Text(
-                'Belajar Menyusun Kalimat\ndengan Cara Menyenangkan!',
+              Text(
+                localizations.homeSubtitle,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 18,
                   fontWeight: FontWeight.w500,
@@ -76,9 +90,12 @@ class HomePage extends StatelessWidget {
                     ),
                     elevation: 4,
                   ),
-                  child: const Text(
-                    'Mulai Bermain',
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  child: Text(
+                    localizations.startButton,
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),

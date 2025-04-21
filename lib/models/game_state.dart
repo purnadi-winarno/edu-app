@@ -22,6 +22,20 @@ class GameState extends ChangeNotifier {
   List<String> _shuffledWords = [];
   List<String> _selectedWords = [];
 
+  // Current language
+  String _currentLanguage = 'id'; // Default to Indonesian
+
+  // Set the language
+  void setLanguage(String languageCode) {
+    if (_currentLanguage != languageCode) {
+      _currentLanguage = languageCode;
+      if (_currentLevel > 0) {
+        // Reload current level with new language
+        setLevel(_currentLevel);
+      }
+    }
+  }
+
   // Getter for current question
   Map<String, dynamic>? get currentQuestion {
     if (_currentLevelQuestions.isEmpty ||
@@ -39,23 +53,84 @@ class GameState extends ChangeNotifier {
   bool get isLastQuestion =>
       _currentQuestionIndex >= _currentLevelQuestions.length - 1;
 
-  // Sample data for levels
-  final List<Map<String, dynamic>> soalLevel1 = [
+  // Indonesian sentences
+  final List<Map<String, dynamic>> soalLevel1_id = [
     {"kalimat": "Surti makan sayur"},
     {"kalimat": "Kucing tidur di sofa"},
     {"kalimat": "Ayah pergi kerja"},
+    {"kalimat": "Ibu masak nasi"},
+    {"kalimat": "Adik bermain bola"},
+    {"kalimat": "Kakak membaca buku"},
+    {"kalimat": "Nenek duduk di kursi"},
+    {"kalimat": "Kakek minum teh"},
+    {"kalimat": "Ani menulis surat"},
+    {"kalimat": "Budi menggambar rumah"},
   ];
 
-  final List<Map<String, dynamic>> soalLevel2 = [
+  final List<Map<String, dynamic>> soalLevel2_id = [
     {"kalimat": "Budi bermain bola di lapangan"},
     {"kalimat": "Ibu memasak nasi goreng"},
     {"kalimat": "Adik sedang belajar matematika"},
+    {"kalimat": "Ayah membaca koran pagi"},
+    {"kalimat": "Kakak menonton film lucu"},
+    {"kalimat": "Nenek menjahit baju baru"},
+    {"kalimat": "Guru mengajar di kelas"},
+    {"kalimat": "Petani menanam padi di sawah"},
+    {"kalimat": "Dokter memeriksa pasien sakit"},
+    {"kalimat": "Koki membuat kue lezat"},
   ];
 
-  final List<Map<String, dynamic>> soalLevel3 = [
+  final List<Map<String, dynamic>> soalLevel3_id = [
     {"kalimat": "Hari ini cuaca sangat cerah"},
     {"kalimat": "Kupu-kupu terbang di taman bunga"},
     {"kalimat": "Saya suka makan es krim coklat"},
+    {"kalimat": "Anak-anak bermain di pantai indah"},
+    {"kalimat": "Mereka berkemah di hutan pinus"},
+    {"kalimat": "Pesawat terbang melewati awan putih"},
+    {"kalimat": "Burung-burung berkicau di pagi hari"},
+    {"kalimat": "Para nelayan berlayar mencari ikan"},
+    {"kalimat": "Pemain musik memainkan lagu indah"},
+    {"kalimat": "Kereta api melaju dengan cepat"},
+  ];
+
+  // English sentences
+  final List<Map<String, dynamic>> soalLevel1_en = [
+    {"kalimat": "Surti eats vegetables"},
+    {"kalimat": "Cat sleeps on sofa"},
+    {"kalimat": "Father goes to work"},
+    {"kalimat": "Mother cooks rice"},
+    {"kalimat": "Little brother plays ball"},
+    {"kalimat": "Sister reads book"},
+    {"kalimat": "Grandmother sits on chair"},
+    {"kalimat": "Grandfather drinks tea"},
+    {"kalimat": "Ani writes letter"},
+    {"kalimat": "Budi draws house"},
+  ];
+
+  final List<Map<String, dynamic>> soalLevel2_en = [
+    {"kalimat": "Budi plays ball in field"},
+    {"kalimat": "Mother cooks fried rice"},
+    {"kalimat": "Brother is studying mathematics"},
+    {"kalimat": "Father reads morning newspaper"},
+    {"kalimat": "Sister watches funny movie"},
+    {"kalimat": "Grandmother sews new clothes"},
+    {"kalimat": "Teacher teaches in class"},
+    {"kalimat": "Farmer plants rice in field"},
+    {"kalimat": "Doctor examines sick patient"},
+    {"kalimat": "Chef makes delicious cake"},
+  ];
+
+  final List<Map<String, dynamic>> soalLevel3_en = [
+    {"kalimat": "Today the weather is very clear"},
+    {"kalimat": "Butterfly flies in flower garden"},
+    {"kalimat": "I like eating chocolate ice cream"},
+    {"kalimat": "Children play on beautiful beach"},
+    {"kalimat": "They camp in pine forest"},
+    {"kalimat": "Airplane passes through white clouds"},
+    {"kalimat": "Birds chirp in morning"},
+    {"kalimat": "Fishermen sail searching for fish"},
+    {"kalimat": "Musicians play beautiful song"},
+    {"kalimat": "Train moves very quickly"},
   ];
 
   // Initialize level
@@ -67,16 +142,20 @@ class GameState extends ChangeNotifier {
 
     switch (level) {
       case 1:
-        _currentLevelQuestions = soalLevel1;
+        _currentLevelQuestions =
+            _currentLanguage == 'en' ? soalLevel1_en : soalLevel1_id;
         break;
       case 2:
-        _currentLevelQuestions = soalLevel2;
+        _currentLevelQuestions =
+            _currentLanguage == 'en' ? soalLevel2_en : soalLevel2_id;
         break;
       case 3:
-        _currentLevelQuestions = soalLevel3;
+        _currentLevelQuestions =
+            _currentLanguage == 'en' ? soalLevel3_en : soalLevel3_id;
         break;
       default:
-        _currentLevelQuestions = soalLevel1;
+        _currentLevelQuestions =
+            _currentLanguage == 'en' ? soalLevel1_en : soalLevel1_id;
     }
 
     _totalQuestions = _currentLevelQuestions.length;

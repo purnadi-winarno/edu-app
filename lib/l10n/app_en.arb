@@ -1,0 +1,34 @@
+{
+  "appTitle": "Learning Words",
+  "homeTitle": "Learn Words",
+  "homeSubtitle": "Learn to Build Sentences in a Fun Way!",
+  "startButton": "Start Learning",
+  
+  "levelSelectionTitle": "Select Level",
+  "levelSelectionSubtitle": "Choose a Game Level",
+  "level1Title": "Level 1",
+  "level1Description": "Simple Sentences",
+  "level2Title": "Level 2",
+  "level2Description": "Medium Sentences",
+  "level3Title": "Level 3",
+  "level3Description": "Complex Sentences",
+  
+  "questionText": "Question {current} of {total}",
+  "checkAnswerButton": "Check Answer",
+  "correctFeedback": "Correct! 👏",
+  "incorrectFeedback": "Wrong 😔 Try again!",
+  
+  "gameOverTitle": "Game Over!",
+  "livesExhausted": "You have run out of lives!",
+  "dontGiveUp": "Don't give up, Try again!",
+  "tryAgainButton": "Try Again",
+  "backToMenuButton": "Back to Main Menu",
+  
+  "congratulationsTitle": "Congratulations!",
+  "levelComplete": "Level {level} Completed!",
+  "finalScore": "Final Score",
+  "remainingLives": "Remaining Lives",
+  "nextLevelButton": "Next Level",
+  
+  "languageSwitch": "Language"
+} 

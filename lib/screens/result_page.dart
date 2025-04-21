@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:confetti/confetti.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../models/game_state.dart';
 import 'level_selection_page.dart';
 import 'home_page.dart';
@@ -33,6 +34,7 @@ class _ResultPageState extends State<ResultPage> {
   @override
   Widget build(BuildContext context) {
     final gameState = Provider.of<GameState>(context);
+    final localizations = AppLocalizations.of(context)!;
     final int level = gameState.currentLevel;
     final int lives = gameState.lives;
     final int score = gameState.progressPercentage * 100 ~/ 1;
@@ -56,9 +58,9 @@ class _ResultPageState extends State<ResultPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Spacer(),
-                    const Text(
-                      'Selamat!',
-                      style: TextStyle(
+                    Text(
+                      localizations.congratulationsTitle,
+                      style: const TextStyle(
                         fontSize: 42,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
@@ -82,7 +84,7 @@ class _ResultPageState extends State<ResultPage> {
                     ),
                     const SizedBox(height: 30),
                     Text(
-                      'Level $level Selesai!',
+                      localizations.levelComplete('$level'),
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         color: Colors.white,
@@ -91,9 +93,9 @@ class _ResultPageState extends State<ResultPage> {
                       ),
                     ),
                     const SizedBox(height: 24),
-                    _buildResultCard('Skor Akhir', '$score%'),
+                    _buildResultCard(localizations.finalScore, '$score%'),
                     const SizedBox(height: 16),
-                    _buildResultCard('Nyawa Tersisa', '$lives'),
+                    _buildResultCard(localizations.remainingLives, '$lives'),
                     const Spacer(),
                     ElevatedButton(
                       onPressed: () {
@@ -113,9 +115,9 @@ class _ResultPageState extends State<ResultPage> {
                         ),
                         elevation: 4,
                       ),
-                      child: const Text(
-                        'Level Berikutnya',
-                        style: TextStyle(
+                      child: Text(
+                        localizations.nextLevelButton,
+                        style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
@@ -132,9 +134,9 @@ class _ResultPageState extends State<ResultPage> {
                           (route) => false,
                         );
                       },
-                      child: const Text(
-                        'Kembali ke Menu Utama',
-                        style: TextStyle(
+                      child: Text(
+                        localizations.backToMenuButton,
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,

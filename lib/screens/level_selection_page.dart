@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../models/game_state.dart';
 import 'quiz_page.dart';
 
@@ -8,9 +9,11 @@ class LevelSelectionPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Pilih Level'),
+        title: Text(localizations.levelSelectionTitle),
         centerTitle: true,
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
@@ -32,7 +35,7 @@ class LevelSelectionPage extends StatelessWidget {
               children: [
                 const SizedBox(height: 20),
                 Text(
-                  'Pilih Level Permainan',
+                  localizations.levelSelectionSubtitle,
                   style: Theme.of(context).textTheme.displayMedium,
                   textAlign: TextAlign.center,
                 ),
@@ -43,8 +46,8 @@ class LevelSelectionPage extends StatelessWidget {
                       _buildLevelCard(
                         context,
                         level: 1,
-                        title: 'Level 1',
-                        description: 'Kalimat Sederhana',
+                        title: localizations.level1Title,
+                        description: localizations.level1Description,
                         color: Colors.green,
                         iconData: Icons.star,
                       ),
@@ -52,8 +55,8 @@ class LevelSelectionPage extends StatelessWidget {
                       _buildLevelCard(
                         context,
                         level: 2,
-                        title: 'Level 2',
-                        description: 'Kalimat Menengah',
+                        title: localizations.level2Title,
+                        description: localizations.level2Description,
                         color: Colors.orange,
                         iconData: Icons.star_half,
                       ),
@@ -61,8 +64,8 @@ class LevelSelectionPage extends StatelessWidget {
                       _buildLevelCard(
                         context,
                         level: 3,
-                        title: 'Level 3',
-                        description: 'Kalimat Kompleks',
+                        title: localizations.level3Title,
+                        description: localizations.level3Description,
                         color: Colors.red,
                         iconData: Icons.stars,
                       ),

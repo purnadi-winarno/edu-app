@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../models/game_state.dart';
 import '../services/tts_service.dart';
+import '../services/sound_service.dart';
 import '../widgets/game_progress_bar.dart';
 import '../widgets/lives_counter.dart';
 import '../widgets/word_button.dart';
@@ -9,6 +11,7 @@ import '../widgets/audio_button.dart';
 import '../widgets/confetti_overlay.dart';
 import 'result_page.dart';
 import 'game_over_page.dart';
+import '../providers/language_provider.dart';
 
 class QuizPage extends StatefulWidget {
   const QuizPage({super.key});
@@ -19,6 +22,7 @@ class QuizPage extends StatefulWidget {
 
 class _QuizPageState extends State<QuizPage> {
   final TTSService _ttsService = TTSService();
+  final SoundService _soundService = SoundService();
   bool _showFeedback = false;
   bool _isCorrect = false;
   bool _showConfetti = false;
@@ -29,6 +33,14 @@ class _QuizPageState extends State<QuizPage> {
     // Initialize and speak the first question
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final gameState = Provider.of<GameState>(context, listen: false);
+      final languageProvider = Provider.of<LanguageProvider>(
+        context,
+        listen: false,
+      );
+
+      // Set TTS language based on app language
+      _ttsService.setLanguage(languageProvider.locale.languageCode);
+
       if (gameState.currentQuestion != null) {
         _ttsService.speak(gameState.currentQuestion!['kalimat']);
       }
@@ -38,12 +50,20 @@ class _QuizPageState extends State<QuizPage> {
   @override
   void dispose() {
     _ttsService.dispose();
+    _soundService.dispose();
     super.dispose();
   }
 
   void _checkAnswer() {
     final gameState = Provider.of<GameState>(context, listen: false);
     final isCorrect = gameState.checkAnswer();
+
+    // Play appropriate sound based on answer
+    if (isCorrect) {
+      _soundService.playCorrectSound();
+    } else {
+      _soundService.playIncorrectSound();
+    }
 
     setState(() {
       _showFeedback = true;
@@ -74,7 +94,13 @@ class _QuizPageState extends State<QuizPage> {
           return;
         }
 
-        // Speak the next question
+        // Get current language and speak the next question
+        final languageProvider = Provider.of<LanguageProvider>(
+          context,
+          listen: false,
+        );
+        _ttsService.setLanguage(languageProvider.locale.languageCode);
+
         if (gameState.currentQuestion != null) {
           _ttsService.speak(gameState.currentQuestion!['kalimat']);
         }
@@ -94,6 +120,8 @@ class _QuizPageState extends State<QuizPage> {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+
     return Consumer<GameState>(
       builder: (context, gameState, child) {
         return ConfettiOverlay(
@@ -123,12 +151,16 @@ class _QuizPageState extends State<QuizPage> {
                       child: GameProgressBar(
                         progress: gameState.progressPercentage,
                         progressColor: Colors.green,
+                        width: MediaQuery.of(context).size.width - 32.0,
                       ),
                     ),
 
                     // Question counter
                     Text(
-                      'Soal ${gameState.currentQuestionIndex + 1} dari ${gameState.totalQuestions}',
+                      localizations.questionText(
+                        '${gameState.currentQuestionIndex + 1}',
+                        '${gameState.totalQuestions}',
+                      ),
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -194,7 +226,7 @@ class _QuizPageState extends State<QuizPage> {
                     // Check button
                     ElevatedButton(
                       onPressed:
-                          gameState.selectedWords.isNotEmpty
+                          gameState.selectedWords.isNotEmpty && !_showFeedback
                               ? _checkAnswer
                               : null,
                       style: ElevatedButton.styleFrom(
@@ -205,9 +237,9 @@ class _QuizPageState extends State<QuizPage> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: const Text(
-                        'Periksa Jawaban',
-                        style: TextStyle(
+                      child: Text(
+                        localizations.checkAnswerButton,
+                        style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
@@ -225,14 +257,27 @@ class _QuizPageState extends State<QuizPage> {
                       width: double.infinity,
                       padding: const EdgeInsets.all(16),
                       color: _isCorrect ? Colors.green : Colors.red,
-                      child: Text(
-                        _isCorrect ? 'Benar! 👏' : 'Salah 😔 Coba lagi!',
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            _isCorrect ? Icons.check_circle : Icons.cancel,
+                            color: Colors.white,
+                            size: 30,
+                          ),
+                          const SizedBox(width: 12),
+                          Text(
+                            _isCorrect
+                                ? localizations.correctFeedback
+                                : localizations.incorrectFeedback,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
                     )
                     : null,
