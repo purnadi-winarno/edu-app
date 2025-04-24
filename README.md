@@ -13,7 +13,7 @@ An engaging Flutter-based educational application that helps children learn sent
 ### Gameplay Screens
 <div style="display: flex; gap: 10px;">
     <img src="assets/screenshots/quiz_page_1.png" width="250" alt="Quiz Interface">
-    <img src="assets/screenshots/quiz_page_2.png" width="250" alt="Quiz Progress">
+    <img src="assets/screenshots/game_overlay_screen.gif" width="250" alt="Quiz Progress">
 </div>
 
 ### Feedback States
@@ -25,7 +25,7 @@ An engaging Flutter-based educational application that helps children learn sent
 ### Results and Game Over
 <div style="display: flex; gap: 10px;">
     <img src="assets/screenshots/end_quiz_state.gif" width="250" alt="Level Complete Screen">
-    <img src="assets/screenshots/game_over_screen.gif" width="250" alt="Game Over Screen">
+    <img src="assets/screenshots/game_over_screen.png" width="250" alt="Game Over Screen">
 </div>
 
 
