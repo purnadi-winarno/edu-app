@@ -1,10 +1,53 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:lottie/lottie.dart';
 import 'level_selection_page.dart';
 import '../widgets/language_switch.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _buttonAnimationController;
+  late Animation<Offset> _buttonAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Initialize animation controller with a 1.5-second duration
+    _buttonAnimationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    )..repeat(
+      reverse: true,
+    ); // Makes the animation go back and forth continuously
+
+    // Create a Tween animation that moves the button up and down
+    _buttonAnimation = Tween<Offset>(
+      begin: const Offset(0, 0),
+      end: const Offset(
+        0,
+        0.1,
+      ), // Subtle movement - 10% of the container height
+    ).animate(
+      CurvedAnimation(
+        parent: _buttonAnimationController,
+        curve: Curves.easeInOut,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _buttonAnimationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,17 +87,19 @@ class HomePage extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               Container(
-                width: 120,
-                height: 120,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                ),
+                decoration: const BoxDecoration(shape: BoxShape.circle),
                 child: Center(
-                  child: Icon(
-                    Icons.school,
-                    size: 80,
-                    color: Colors.blue.shade700,
+                  child: Container(
+                    width: 200,
+                    height: 200,
+                    decoration: const BoxDecoration(shape: BoxShape.circle),
+                    child: Center(
+                      child: Lottie.asset(
+                        'assets/animations/robot.json',
+                        fit: BoxFit.cover,
+                        repeat: true,
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -71,29 +116,32 @@ class HomePage extends StatelessWidget {
               const Spacer(),
               Padding(
                 padding: const EdgeInsets.all(24.0),
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const LevelSelectionPage(),
+                child: SlideTransition(
+                  position: _buttonAnimation,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LevelSelectionPage(),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.blue.shade700,
+                      minimumSize: const Size(double.infinity, 60),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
                       ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.blue.shade700,
-                    minimumSize: const Size(double.infinity, 60),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+                      elevation: 4,
                     ),
-                    elevation: 4,
-                  ),
-                  child: Text(
-                    localizations.startButton,
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
+                    child: Text(
+                      localizations.startButton,
+                      style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
