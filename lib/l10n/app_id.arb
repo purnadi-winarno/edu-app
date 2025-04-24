@@ -30,5 +30,16 @@
   "remainingLives": "Nyawa Tersisa",
   "nextLevelButton": "Level Berikutnya",
   
-  "languageSwitch": "Bahasa"
+  "languageSwitch": "Bahasa",
+  
+  "praiseMessage1": "Bagus sekali!",
+  "praiseMessage2": "Sempurna!",
+  "praiseMessage3": "Hebat!",
+  "praiseMessage4": "Kerja bagus!",
+  "praiseMessage5": "Luar biasa!",
+  "praiseMessage6": "Kamu keren!",
+  "praiseMessage7": "Pertahankan!",
+  "praiseMessage8": "Brilian!",
+  "praiseMessage9": "Mengagumkan!",
+  "praiseMessage10": "Keren sekali!"
 } 

@@ -13,9 +13,14 @@ class AnimationService {
   // List of success animations
   final List<String> successAnimations = [
     'assets/animations/thumbs_up.json',
-    'assets/animations/success_check.json',
-    'assets/animations/trophy.json',
-    'assets/animations/celebration.json',
+    'assets/animations/bintang_kacamata.json',
+    'assets/animations/bintang.json',
+    'assets/animations/fireworks1.json',
+    'assets/animations/fireworks2.json',
+    'assets/animations/happy_tree.json',
+    'assets/animations/happy_water_melon.json',
+    'assets/animations/rocket.json',
+    'assets/animations/rocket1.json',
   ];
 
   // Get a random success animation

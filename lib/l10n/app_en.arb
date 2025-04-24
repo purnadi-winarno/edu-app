@@ -30,5 +30,16 @@
   "remainingLives": "Remaining Lives",
   "nextLevelButton": "Next Level",
   
-  "languageSwitch": "Language"
+  "languageSwitch": "Language",
+  
+  "praiseMessage1": "Good job!",
+  "praiseMessage2": "Excellent!",
+  "praiseMessage3": "Amazing work!",
+  "praiseMessage4": "Well done!",
+  "praiseMessage5": "Fantastic!",
+  "praiseMessage6": "You're awesome!",
+  "praiseMessage7": "Keep it up!",
+  "praiseMessage8": "Brilliant!",
+  "praiseMessage9": "Outstanding!",
+  "praiseMessage10": "Super cool!"
 } 
