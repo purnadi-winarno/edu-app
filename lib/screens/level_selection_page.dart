@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../models/game_state.dart';
+import '../widgets/cloud_animation.dart';
 import 'quiz_page.dart';
 
 class LevelSelectionPage extends StatelessWidget {
@@ -18,64 +19,83 @@ class LevelSelectionPage extends StatelessWidget {
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
       ),
-      body: Container(
-        width: double.infinity,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.blue.shade100, Colors.white],
-          ),
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(height: 20),
-                Text(
-                  localizations.levelSelectionSubtitle,
-                  style: Theme.of(context).textTheme.displayMedium,
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 40),
-                Expanded(
-                  child: ListView(
-                    children: [
-                      _buildLevelCard(
-                        context,
-                        level: 1,
-                        title: localizations.level1Title,
-                        description: localizations.level1Description,
-                        color: Colors.green,
-                        iconData: Icons.star,
-                      ),
-                      const SizedBox(height: 16),
-                      _buildLevelCard(
-                        context,
-                        level: 2,
-                        title: localizations.level2Title,
-                        description: localizations.level2Description,
-                        color: Colors.orange,
-                        iconData: Icons.star_half,
-                      ),
-                      const SizedBox(height: 16),
-                      _buildLevelCard(
-                        context,
-                        level: 3,
-                        title: localizations.level3Title,
-                        description: localizations.level3Description,
-                        color: Colors.red,
-                        iconData: Icons.stars,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          // Background container with gradient
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Colors.blue.shade300, Colors.blue.shade100],
+              ),
             ),
           ),
-        ),
+
+          // Cloud animations
+          const CloudAnimation(),
+
+          // Main content
+          SafeArea(
+            child: SizedBox.expand(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    const SizedBox(height: 20),
+                    Text(
+                      localizations.levelSelectionSubtitle,
+                      style: Theme.of(
+                        context,
+                      ).textTheme.displayMedium?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 40),
+                    SizedBox(
+                      height: 500,
+                      child: ListView(
+                        children: [
+                          _buildLevelCard(
+                            context,
+                            level: 1,
+                            title: localizations.level1Title,
+                            description: localizations.level1Description,
+                            color: Colors.green,
+                            iconData: Icons.star,
+                          ),
+                          const SizedBox(height: 16),
+                          _buildLevelCard(
+                            context,
+                            level: 2,
+                            title: localizations.level2Title,
+                            description: localizations.level2Description,
+                            color: Colors.orange,
+                            iconData: Icons.star_half,
+                          ),
+                          const SizedBox(height: 16),
+                          _buildLevelCard(
+                            context,
+                            level: 3,
+                            title: localizations.level3Title,
+                            description: localizations.level3Description,
+                            color: Colors.red,
+                            iconData: Icons.stars,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
