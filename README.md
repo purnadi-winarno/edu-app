@@ -69,12 +69,29 @@ An engaging Flutter-based educational application that helps children learn sent
 
 ## 📱 Screenshots
 
-[Screenshots will be added showing:]
-- Home screen
-- Gameplay interface
-- Level completion celebration
-- Game over screen
-- Settings menu
+### Home and Menu Screens
+<div style="display: flex; gap: 10px;">
+    <img src="assets/screenshots/home_screen.png" width="250" alt="Home Screen">
+    <img src="assets/screenshots/menu_screen.png" width="250" alt="Menu Screen">
+</div>
+
+### Gameplay Screens
+<div style="display: flex; gap: 10px;">
+    <img src="assets/screenshots/quiz_page_1.png" width="250" alt="Quiz Interface">
+    <img src="assets/screenshots/quiz_page_2.png" width="250" alt="Quiz Progress">
+</div>
+
+### Feedback States
+<div style="display: flex; gap: 10px;">
+    <img src="assets/screenshots/quiz_page_correct_state.png" width="250" alt="Correct Answer Feedback">
+    <img src="assets/screenshots/quiz_page_wrong_state.png" width="250" alt="Wrong Answer Feedback">
+</div>
+
+### Results and Game Over
+<div style="display: flex; gap: 10px;">
+    <img src="assets/screenshots/end_quiz_state.png" width="250" alt="Level Complete Screen">
+    <img src="assets/screenshots/game_over_screen.png" width="250" alt="Game Over Screen">
+</div>
 
 ## 🚀 Getting Started
 
@@ -142,8 +159,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 👤 Author
 
 [Your Name]
-- GitHub: @purnadi-winarno
-- LinkedIn: linkedin.com/in/purnadi-winarno
+- GitHub: https://github.com/purnadi-winarno
+- LinkedIn: https://linkedin.com/in/purnadi-winarno
 - email: purnadi.winarno@gmail.com
 
 ## 🙏 Acknowledgments
